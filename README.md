@@ -10,22 +10,20 @@
 
 ### Currently we only support debian based distros but unoffical support for Arch, OpenSUSE, and other linux distrobutions are planned
 
-1. ``sudo apt-get update``
-2. ``sudo apt install ffmpeg python3 python3-pip``
-3. ``python3 -m pip install --upgrade Pillow # Recent changes to Pillow might cause this to give an error but if it works, Great``
-4. ``pip3 install tqdm``
-5. ``pip3 install numpy``
-6. ``pip3 install pygame``
-7. ``sudo apt install git``
-8. ``git clone https://github.com/Ubuntufanboy/ascii-video-player``
-9. ``cd ascii-video-player``
-10. ``cd src``
+1. ``sudo apt-get update -y``
+2. ``sudo apt install ffmpeg python3 python3-pip -y # Install python and pip``
+3. ``python3 -m pip install --upgrade Pillow --break-system-packages # Recent changes to Pillow might cause this to give an error but if it works, Great``
+4. ``python3 -m pip install tqdm numpy pygame --break-system-packages # Install depedencies``
+5. ``sudo apt install git -y``
+6. ``git clone --depth=1 https://github.com/Ubuntufanboy/ascii-video-player # Clone repo``
+7. ``cd ascii-video-player``
+8. ``cd src``
 
 # Usage guide
 
-1. have an mp4 file in the same folder or be prepared to provide the full video path
-2. run ``python3 mp4_to_asciivideo.py your_file.mp4``
-3. run ``python3 play.py the_same_video_file_but_not_mp4.asciivideo``
+1. Have an mp4 file in the same folder or be prepared to provide the full video path
+2. run ``python3 mp4_to_asciivideo.py input_video_filename.mp4``
+3. run ``python3 play.py input_video_filename.asciivideo``
 
 ## PLEASE report any bugs to me in an issue (No such thing as a dumb question)!
 
