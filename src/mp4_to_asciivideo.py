@@ -1,5 +1,6 @@
 import sys
 import os
+from shutil import rmtree
 
 try:
     video_file = sys.argv[1]
@@ -15,7 +16,10 @@ if not video_file.endswith(".mp4"):
     sys.exit(1)
 
 # refresh img folder to prevent weird stuff
-os.system("rm -rf target")
+try:
+    rmtree("target")
+except FileNotFoundError:
+    pass
 os.system("mkdir target/img -p")
 os.system("mkdir target/audio -p")
 # Get random audio name to prevent overwriting
@@ -23,9 +27,10 @@ os.system("mkdir target/audio -p")
 # Extract audio from video
 os.system(f"ffmpeg -i {video_file} target/audio/audio.mp3")
 
-print("Congrats! The audio has been extracted from the video sucessfully")
+print("The audio has been extracted from the video sucessfully")
 
-os.system(f"ffmpeg -i {video_file} -vf fps=15 target/img/output%d.png")
+os.system(f"ffmpeg -i {video_file} -vf fps=24 target/img/output%d.png") # Converts video into numbered png
+                                                                        # At a rate of 24 FPS
 
 count = 0
 dir_path = f"{os.getcwd()}/target/img"
@@ -47,5 +52,5 @@ os.system("tar cf target.tar.gz ./target")
 exported = video_file.replace(".mp4", ".asciivideo")
 os.system(f"mv target.tar.gz {exported}")
 print("finishing up...")
-os.system("rm -rf target")
+rmtree("target")
 print("done!")

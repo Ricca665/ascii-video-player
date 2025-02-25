@@ -17,6 +17,30 @@ import numpy as np
 from tqdm import tqdm
 from PIL import Image
 from threading import Thread
+from shutil import rmtree
+from blessed import Terminal
+
+term = Terminal() # Initialise blessed
+
+
+'''This section of the script hides the terminal terminal cursor'''
+if os.name == 'nt':
+    import msvcrt
+    import ctypes
+    class _CursorInfo(ctypes.Structure):
+        _fields_ = [("size", ctypes.c_int),
+                    ("visible", ctypes.c_byte)]
+
+if os.name == 'nt':
+    ci = _CursorInfo()
+    handle = ctypes.windll.kernel32.GetStdHandle(-11)
+    ctypes.windll.kernel32.GetConsoleCursorInfo(handle, ctypes.byref(ci))
+    ci.visible = False
+    ctypes.windll.kernel32.SetConsoleCursorInfo(handle, ctypes.byref(ci))
+elif os.name == 'posix' or os.name == "linux" or os.name == "linux2":
+    sys.stdout.write("\033[?25l")
+    sys.stdout.flush()
+
 
 # Extract the .asciivideo file
 try:
@@ -25,7 +49,7 @@ except IndexError:
     print("Please provide a asciivideo file!")
     sys.exit(1)
 
-logger = logging.Logger("Ascii Video Logger")
+logger = logging.Logger("Ascii video logger")
 try:
     verbose = sys.argv[2]
     if verbose == "debug":
@@ -54,13 +78,26 @@ os.chdir("..")
 os.chdir("..")
 
 # Let the fun begin
-logger.warning("Please do not resize the screen")
-time.sleep(1)
+logger.warning("Please do NOT resize the screen")
+time.sleep(2)
+
+'''Get columns and lines of terminal'''
 x = os.get_terminal_size().columns
 y = os.get_terminal_size().lines
 
-os.chdir("target")
-os.mkdir("resized")
+try: #Just in case
+    os.chdir("target")
+except Exception:
+    os.mkdir("target")
+    os.chdir("target")
+
+'''In case the directory resized already exists we remove everything inside and recreate it'''
+try:
+    os.mkdir("resized")
+except FileExistsError:
+    rmtree("resized")
+    os.mkdir("resized")
+
 for i in tqdm(range(1, frame_number+1)):
     image = Image.open(f"img/output{i}.png")
     image = image.resize((x, y))
@@ -90,7 +127,6 @@ def process(img: np.ndarray) -> str:
 
 # Must be in img dir for this to work
 current = os.getcwd()
-
 
 def is_valid(local_frames: list) -> bool:
     """
@@ -177,18 +213,41 @@ pygame.mixer.init()
 pygame.mixer.music.load(f"{current}/audio/audio.mp3")
 
 os.chdir("..")
-os.system("rm -rf target")
+
+rmtree("target") #Using python modules for compatibility with windows machines
 
 logger.debug("Video playback started")
 frame = 0
 next_call = time.perf_counter()
-pygame.mixer.music.play()
-while 1:
-    if time.perf_counter() > next_call:
-        next_call += 1/15
-        os.system("clear")
-        try:
-            print(frames[frame])
-        except IndexError:
-            break
-        frame += 1
+
+pygame.mixer.music.play() #Play extracted audio
+
+"""
+Here is what happens down below
+1. Terminal gets full screened so it doesn't display random characters when doing CTRL+C
+2. Putting the frames in a bugger, moving the terminal cursor, not only we basically removed the flashing
+effect after doing clear, but it also ensures smooth play
+
+And after that the video ends it exits.
+"""
+
+with term.fullscreen():
+    while True:
+        if time.perf_counter() > next_call:
+            next_call += 1/24 # 24 FPS
+            try:
+                frame_buffer = term.move_yx(0, 0) + frames[frame]
+                print(frame_buffer, end='')  # Print all the data in one go
+            except IndexError:
+                break # Video finished
+            frame += 1
+
+if os.name == 'nt':
+    ci = _CursorInfo()
+    handle = ctypes.windll.kernel32.GetStdHandle(-11)
+    ctypes.windll.kernel32.GetConsoleCursorInfo(handle, ctypes.byref(ci))
+    ci.visible = True
+    ctypes.windll.kernel32.SetConsoleCursorInfo(handle, ctypes.byref(ci))
+elif os.name == 'posix' or os.name == "linux" or os.name == "linux2":
+    sys.stdout.write("\033[?25h")
+    sys.stdout.flush()
