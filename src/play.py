@@ -22,7 +22,7 @@ from blessed import Terminal
 
 term = Terminal() # Initialise blessed
 
-
+'''https://stackoverflow.com/questions/5174810/how-to-turn-off-blinking-cursor-in-command-window'''
 '''This section of the script hides the terminal terminal cursor'''
 if os.name == 'nt':
     import msvcrt
@@ -241,6 +241,8 @@ with term.fullscreen():
             except IndexError:
                 break # Video finished
             frame += 1
+
+'''Show terminal cursor'''
 
 if os.name == 'nt':
     ci = _CursorInfo()
