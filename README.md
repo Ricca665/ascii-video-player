@@ -8,7 +8,7 @@
 
 # Install instructions
 
-### Currently we only support debian based distros but unoffical support for Arch, OpenSUSE, and other linux distrobutions are planned
+### Currently we only support debian based distros but unoffical support for Arch, OpenSUSE, and other linux distributions are planned
 
 1. ``sudo apt-get update -y``
 2. ``sudo apt install ffmpeg python3 python3-pip -y # Install python and pip``
@@ -23,7 +23,7 @@
 
 1. Have an mp4 file in the same folder or be prepared to provide the full video path
 2. run ``python3 mp4_to_asciivideo.py input_video_filename.mp4``
-3. run ``python3 play.py input_video_filename.asciivideo``
+3. run ``python3 play.py input_video_filename.asciivideo fps``
 
 ## PLEASE report any bugs to me in an issue (No such thing as a dumb question)!
 
