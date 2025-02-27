@@ -13,7 +13,7 @@
 1. ``sudo apt-get update -y``
 2. ``sudo apt install ffmpeg python3 python3-pip -y # Install python and pip``
 3. ``python3 -m pip install --upgrade Pillow --break-system-packages # Recent changes to Pillow might cause this to give an error but if it works, Great``
-4. ``python3 -m pip install tqdm numpy pygame blessed --break-system-packages # Install depedencies``
+4. ``python3 -m pip install tqdm numpy pygame blessed opencv-python --break-system-packages # Install depedencies``
 5. ``sudo apt install git -y``
 6. ``git clone --depth=1 https://github.com/Ubuntufanboy/ascii-video-player # Clone repo``
 7. ``cd ascii-video-player``
